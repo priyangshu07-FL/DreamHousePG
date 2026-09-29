@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Dream House PG — a warm, modern PG accommodation website prototype." />
+  <title>Dream House PG | Comfortable & Convenient PG Accommodation</title>
+
+  <style>
+    :root {
+      --bg: #f5f3ed;
+      --surface: rgba(255,255,255,.68);
+      --surface-solid: #fffdf8;
+      --text: #24302b;
+      --muted: #69736d;
+      --sage: #6f8677;
+      --sage-dark: #50675a;
+      --sage-light: #dce5dd;
+      --cream: #eee9dc;
+      --line: rgba(36,48,43,.10);
+      --shadow: 0 18px 50px rgba(50,65,56,.10);
+      --radius: 24px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 82px; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(220,229,221,.65), transparent 30%),
+        radial-gradient(circle at 100% 35%, rgba(238,233,220,.8), transparent 28%),
+        var(--bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    img { display: block; width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea, select { font: inherit; }
+    button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+    button, a { min-width: 44px; min-height: 44px; }
+
+    .container { width: min(calc(100% - 32px), var(--max)); margin-inline: auto; }
+    .section { padding: 76px 0; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--sage-dark);
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 22px;
+      height: 1px;
+      background: currentColor;
+    }
+    h1, h2, h3 { line-height: 1.12; letter-spacing: -.035em; }
+    h1 { font-size: clamp(2.7rem, 11vw, 5.8rem); }
+    h2 { font-size: clamp(2rem, 7vw, 3.5rem); }
+    h3 { font-size: 1.25rem; }
+    .lead { color: var(--muted); font-size: 1rem; max-width: 620px; }
+    .glass {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    /* Header */
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 1000;
+      padding: 12px 0;
+      background: rgba(245,243,237,.76);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .nav {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: -.03em;
+      min-height: 44px;
+    }
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--sage);
+      color: white;
+      font-weight: 900;
+    }
+    .menu-toggle {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.62);
+      border-radius: 13px;
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+    .hamburger { width: 21px; display: grid; gap: 5px; }
+    .hamburger span {
+      height: 2px;
+      width: 100%;
+      background: var(--text);
+      border-radius: 10px;
+      transition: .25s ease;
+    }
+    .menu-toggle[aria-expanded="true"] .hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .menu-toggle[aria-expanded="true"] .hamburger span:nth-child(2) { opacity: 0; }
+    .menu-toggle[aria-expanded="true"] .hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-links {
+      position: fixed;
+      top: 80px;
+      left: 16px;
+      right: 16px;
+      padding: 12px;
+      display: grid;
+      gap: 4px;
+      background: rgba(255,253,248,.92);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      transform: translateY(-12px);
+      opacity: 0;
+      visibility: hidden;
+      transition: .25s ease;
+    }
+    .nav-links.open { transform: translateY(0); opacity: 1; visibility: visible; }
+    .nav-links a {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+    .nav-links a:hover { background: var(--sage-light); }
+
+    /* Buttons */
+    .btn {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .btn-primary { background: var(--sage); color: white; box-shadow: 0 10px 24px rgba(80,103,90,.2); }
+    .btn-secondary { background: rgba(255,255,255,.72); border: 1px solid var(--line); }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active, a:active, button:active { transform: scale(.97); }
+
+    /* Hero */
+    .hero { padding-top: 120px; min-height: 100svh; display: grid; align-items: center; }
+    .hero-grid { display: grid; gap: 34px; }
+    .hero-copy { padding: 20px 0; }
+    .hero-copy h1 { margin-bottom: 18px; }
+    .hero-copy .lead { margin-bottom: 26px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .hero-meta {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      color: var(--muted);
+      font-size: .88rem;
+      font-weight: 700;
+    }
+    .hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+
+    .image-placeholder {
+      width: 100%;
+      height: 100%;
+      min-height: 210px;
+      display: grid;
+      place-items: center;
+      background: #ebe9e1;
+      color: #69736d;
+      font-weight: 800;
+      letter-spacing: .02em;
+      border: 1px dashed rgba(80,103,90,.28);
+    }
+    .slide .image-placeholder { min-height: 390px; }
+    .gallery-item .image-placeholder { min-height: 330px; border-radius: 22px; }
+    .hero-slider, .gallery-slider {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      background: #dfe6df;
+      touch-action: pan-y;
+    }
+    .hero-slider { min-height: 390px; }
+    .slides, .gallery-track {
+      display: flex;
+      height: 100%;
+      transition: transform .55s cubic-bezier(.22,.61,.36,1);
+    }
+    .slide { min-width: 100%; position: relative; }
+    .slide img { height: 100%; min-height: 390px; object-fit: cover; }
+    .slide-overlay {
+      position: absolute;
+      inset: auto 16px 16px;
+      padding: 15px;
+      color: white;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(20,28,24,.68), rgba(20,28,24,.15));
+      backdrop-filter: blur(10px);
+    }
+    .slide-overlay strong { display: block; font-size: 1rem; }
+    .slider-controls {
+      position: absolute;
+      inset: auto 14px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      pointer-events: none;
+    }
+    .slider-arrow, .dot {
+      pointer-events: auto;
+      border: 0;
+      cursor: pointer;
+    }
+    .slider-arrow {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(10px);
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+    }
+    .dots { display: flex; gap: 6px; }
+    .dot { width: 9px; height: 9px; min-width: 9px; min-height: 9px; border-radius: 50%; background: rgba(255,255,255,.55); }
+    .dot.active { width: 25px; border-radius: 20px; background: white; }
+
+    /* About & Highlights */
+    .about-grid { display: grid; gap: 30px; }
+    .about-card {
+      padding: 24px;
+      border-radius: var(--radius);
+    }
+    .highlights-list {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .highlight-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,.52);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      transition: background .2s ease;
+    }
+    .highlight-item:hover {
+      background: rgba(255,255,255,.75);
+    }
+    .highlight-emoji {
+      font-size: 1.4rem;
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .highlight-content {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .highlight-text {
+      font-weight: 700;
+      font-size: .9rem;
+      color: var(--text);
+    }
+    .highlight-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .dir-tab {
+      font-size: 0.72rem;
+      background: rgba(111,134,119,.15);
+      color: var(--sage-dark);
+      padding: 5px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s ease, color 0.2s ease;
+      min-height: auto;
+      min-width: auto;
+    }
+    .dir-tab:hover {
+      background: var(--sage);
+      color: white;
+    }
+
+    /* Amenities */
+    .section-head { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+    .amenities-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .amenity {
+      min-height: 145px;
+      padding: 18px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: rgba(255,255,255,.58);
+      border: 1px solid var(--line);
+      transition: transform .2s ease, background .2s ease;
+    }
+    .amenity:hover { transform: translateY(-3px); background: rgba(255,255,255,.8); }
+    .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--sage-light);
+      font-size: 1.15rem;
+    }
+    .amenity p { color: var(--muted); font-size: .8rem; }
+
+    /* Rooms */
+    .rooms-grid { display: grid; gap: 18px; }
+    .room-card { overflow: hidden; border-radius: 24px; }
+    .room-image { position: relative; }
+    .room-image img { height: 210px; object-fit: cover; }
+    .room-tag {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255,255,255,.82);
+      font-size: .72rem;
+      font-weight: 900;
+      backdrop-filter: blur(10px);
+    }
+    .room-body { padding: 20px; }
+    .room-body > p { color: var(--muted); font-size: .9rem; margin: 7px 0 16px; }
+    .features { list-style: none; display: grid; gap: 7px; margin-bottom: 18px; }
+    .features li { color: var(--muted); font-size: .84rem; }
+    .features li::before { content: "✓"; color: var(--sage-dark); font-weight: 900; margin-right: 8px; }
+    .room-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .price { font-weight: 900; }
+    .price small { display: block; color: var(--muted); font-weight: 500; font-size: .72rem; }
+    
+    .pricing-note {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--sage-dark);
+      font-weight: 600;
+      max-width: 620px;
+    }
+
+    /* Gallery */
+    .gallery-slider { border-radius: 24px; }
+    .gallery-track { height: 330px; }
+    .gallery-item { min-width: 82%; margin-right: 12px; }
+    .gallery-item img { height: 330px; object-fit: cover; border-radius: 22px; }
+    .gallery-note { color: var(--muted); font-size: .82rem; margin-top: 12px; }
+
+    .hero-slider img, .slide img { width: 100%; display: block; }
+    .room-image img { width: 100%; display: block; height: 210px; object-fit: cover; }
+    .gallery-item img { width: 100%; display: block; height: 330px; object-fit: cover; border-radius: 22px; }
+    .media-grid { display: grid; gap: 18px; }
+    .media-card { overflow: hidden; border-radius: 24px; }
+    .media-card video { width: 100%; display: block; aspect-ratio: 16 / 9; object-fit: cover; background: #dfe6df; }
+    .media-card-body { padding: 18px 20px 20px; }
+    .media-card-body h3 { margin-bottom: 6px; }
+    .media-card-body p { color: var(--muted); font-size: .88rem; }
+
+    /* Contact */
+    .contact-grid { display: grid; gap: 22px; }
+    .contact-card { padding: 22px; border-radius: 24px; }
+    .contact-details { display: grid; gap: 12px; margin-top: 20px; }
+    .contact-detail { display: flex; gap: 12px; align-items: flex-start; }
+    .contact-detail .icon { flex: 0 0 44px; }
+    .contact-detail strong { display: block; }
+    .contact-detail span { color: var(--muted); font-size: .86rem; }
+    form { display: grid; gap: 12px; }
+    label { display: grid; gap: 7px; font-weight: 800; font-size: .82rem; }
+    input, textarea, select {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      outline: none;
+      background: rgba(255,255,255,.72);
+      color: var(--text);
+    }
+    textarea { min-height: 130px; resize: vertical; }
+    input:focus, textarea:focus, select:focus { border-color: var(--sage); box-shadow: 0 0 0 4px rgba(111,134,119,.12); }
+    .map-placeholder {
+      min-height: 260px;
+      border-radius: 22px;
+      border: 1px dashed rgba(80,103,90,.3);
+      background:
+        linear-gradient(rgba(111,134,119,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(111,134,119,.08) 1px, transparent 1px),
+        var(--cream);
+      background-size: 30px 30px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+    }
+
+    /* Footer + mobile CTA */
+    footer { padding: 40px 0 100px; color: var(--muted); font-size: .84rem; }
+    .footer-inner { display: flex; flex-direction: column; gap: 12px; }
+    .mobile-cta {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      z-index: 900;
+      display: block;
+    }
+    .mobile-cta .btn { width: 100%; box-shadow: 0 14px 35px rgba(36,48,43,.22); }
+
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (min-width: 700px) {
+      .container { width: min(calc(100% - 48px), var(--max)); }
+      .section { padding: 100px 0; }
+      .hero { padding-top: 120px; }
+      .hero-grid { grid-template-columns: 1fr 1fr; align-items: center; gap: 44px; }
+      .hero-slider { min-height: 560px; }
+      .slide img { min-height: 560px; }
+      .about-grid { grid-template-columns: 1.15fr .85fr; align-items: center; }
+      .amenities-grid { grid-template-columns: repeat(3, 1fr); }
+      .rooms-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-grid { grid-template-columns: 1fr 1fr; }
+      .footer-inner { flex-direction: row; justify-content: space-between; }
+    }
+
+    @media (min-width: 980px) {
+      .menu-toggle { display: none; }
+      .nav-links {
+        position: static;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        transform: none;
+        opacity: 1;
+        visibility: visible;
+        backdrop-filter: none;
+      }
+      .nav-links a { padding: 8px 12px; font-size: .9rem; }
+      .hero-copy { padding: 30px 0; }
+      .rooms-grid { grid-template-columns: repeat(3, 1fr); }
+      .gallery-track { height: 420px; }
+      .gallery-item { min-width: 34%; }
+      .gallery-item img { height: 420px; }
+      .mobile-cta { display: none; }
+      footer { padding-bottom: 40px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#home" aria-label="Dream House PG home">
+        <span class="brand-mark">PG</span>
+        <span>Dream House PG</span>
+      </a>
+
+      <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="navLinks">
+        <span class="hamburger"><span></span><span></span><span></span></span>
+      </button>
+
+      <nav class="nav-links" id="navLinks" aria-label="Primary navigation">
+        <a href="#about">About</a>
+        <a href="#tour">Tour</a>
+        <a href="#amenities">Amenities</a>
+        <a href="#rooms">Rooms</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <span class="eyebrow">A place to feel at home</span>
+          <h1>Dream House PG</h1>
+          <p class="lead">
+            Comfortable, secure and convenient PG accommodation designed for students and working professionals, with essential facilities for a hassle-free stay.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://wa.me/919123917587?text=Hello%20Dream%20House%20PG%2C%20I%20would%20like%20to%20enquire%20about%20room%20availability." target="_blank" rel="noopener">WhatsApp Enquiry <span>→</span></a>
+            <a class="btn btn-secondary" href="#rooms">Explore Rooms</a>
+          </div>
+          <div class="hero-meta">
+            <span>⌂ Near major colleges & malls</span>
+            <span>◷ Prime Location · Call to know availability</span>
+            <span>★ 10/10 PG</span>
+          </div>
+        </div>
+
+        <div class="hero-slider reveal" id="heroSlider" aria-label="Property image slideshow">
+          <div class="slides">
+            <div class="slide">
+              <img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/hero1.jpeg" alt="Dream House PG exterior" loading="eager">
+              <div class="slide-overlay"><strong>Dream House PG</strong><span>Comfortable accommodation in a convenient location.</span></div>
+            </div>
+            <div class="slide">
+              <img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/hero2.jpeg" alt="Dream House PG property" loading="lazy">
+              <div class="slide-overlay"><strong>Comfortable Rooms</strong><span>Choose from single and double occupancy options.</span></div>
+            </div>
+            <div class="slide">
+              <img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/hero3.jpeg" alt="Dream House PG interior" loading="lazy">
+              <div class="slide-overlay"><strong>Feel at Home</strong><span>Designed for comfortable everyday living.</span></div>
+            </div>
+          </div>
+          <div class="slider-controls">
+            <button class="slider-arrow" data-hero-prev aria-label="Previous slide">‹</button>
+            <div class="dots" data-hero-dots></div>
+            <button class="slider-arrow" data-hero-next aria-label="Next slide">›</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="tour">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Virtual tour</span>
+          <h2>See Dream House PG.</h2>
+          <p class="lead">Take a quick look around the property with these walkthrough videos.</p>
+        </div>
+        <div class="media-grid">
+          <article class="media-card glass reveal">
+            <video controls playsinline preload="metadata" poster="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/hero1.jpeg">
+              <source src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/videos/pgtour1.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="media-card-body">
+              <h3>PG Tour</h3>
+              <p>Explore the property and get a feel for the space before your visit.</p>
+            </div>
+          </article>
+          <article class="media-card glass reveal">
+            <video controls playsinline preload="metadata" poster="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/hero2.jpeg">
+              <source src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/videos/pgtour2.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="media-card-body">
+              <h3>Another Look Around</h3>
+              <p>View more of the accommodation and everyday living spaces.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container about-grid">
+        <div class="reveal">
+          <span class="eyebrow">About us</span>
+          <h2>Simple living, thoughtfully made.</h2>
+          <p class="lead" style="margin-top:18px;">
+            Welcome to Dream House PG, where we believe in providing a safe, comfortable, and homely environment for students and working professionals. Our spaces are thoughtfully designed to meet all your daily needs.
+          </p>
+          <p class="lead" style="margin-top:12px;">
+            Experience hassle-free living with our well-maintained rooms, regular cleaning, and a community-focused atmosphere that helps you focus on your studies and work without any distractions.
+          </p>
+        </div>
+
+        <div class="about-card glass reveal">
+          <span class="eyebrow">Key highlights</span>
+          <ul class="highlights-list">
+            
+            <li class="highlight-item">
+              <span class="highlight-emoji">🎓</span>
+              <div class="highlight-content">
+                <span class="highlight-text">Walking distance from major colleges</span>
+                <div class="highlight-links">
+                  <a href="https://maps.app.goo.gl/tMWXaRdtk1KfUish7" target="_blank" rel="noopener" class="dir-tab">📍 UEM Directions</a>
+                  <a href="https://maps.app.goo.gl/6owrYv2QBCXFbdV49" target="_blank" rel="noopener" class="dir-tab">📍 St. Xavier's Directions</a>
+                </div>
+              </div>
+            </li>
+
+            <li class="highlight-item">
+              <span class="highlight-emoji">🏢</span>
+              <div class="highlight-content">
+                <span class="highlight-text">Close proximity to Rosedale Plaza</span>
+                <div class="highlight-links">
+                  <a href="https://maps.app.goo.gl/zzHEKEfUsJEVinwu6" target="_blank" rel="noopener" class="dir-tab">📍 Get Directions</a>
+                </div>
+              </div>
+            </li>
+
+            <li class="highlight-item">
+              <span class="highlight-emoji">🛍️</span>
+              <div class="highlight-content">
+                <span class="highlight-text">Minutes away from Downtown Mall</span>
+                <div class="highlight-links">
+                  <a href="https://maps.app.goo.gl/mMiT87UyigpnGxfK8" target="_blank" rel="noopener" class="dir-tab">📍 Get Directions</a>
+                </div>
+              </div>
+            </li>
+
+            <li class="highlight-item">
+              <span class="highlight-emoji">🛒</span>
+              <div class="highlight-content">
+                <span class="highlight-text">Market near Karigari Bhawan available nearby</span>
+                <div class="highlight-links">
+                  <a href="https://maps.app.goo.gl/tCdVxbQcnEE2EMYB8" target="_blank" rel="noopener" class="dir-tab">📍 Get Directions</a>
+                </div>
+              </div>
+            </li>
+
+            <li class="highlight-item">
+              <span class="highlight-emoji">🚌</span>
+              <div class="highlight-content">
+                <span class="highlight-text">Quick, easy walk to the main bus stand</span>
+                <div class="highlight-links">
+                  <a href="https://maps.app.goo.gl/PFqoyBAhSG6ZDRPe9" target="_blank" rel="noopener" class="dir-tab">📍 Get Directions</a>
+                </div>
+              </div>
+            </li>
+            
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="amenities">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Amenities</span>
+          <h2>Everything you need.</h2>
+          <p class="lead">We provide a wide range of facilities to make your stay completely hassle-free. Curated essentials for comfortable everyday living.</p>
+        </div>
+
+        <div class="amenities-grid">
+          <article class="amenity reveal"><div class="icon">🍽️</div><div><h3>Meals Included</h3><p>Nutritious everyday meals are included with your stay.</p></div></article>
+          <article class="amenity reveal"><div class="icon">🧺</div><div><h3>Laundry</h3><p>Convenient laundry service is included for residents.</p></div></article>
+          <article class="amenity reveal"><div class="icon">🛡️</div><div><h3>Security</h3><p>A secure environment for a comfortable and worry-free stay.</p></div></article>
+          <article class="amenity reveal"><div class="icon">📍</div><div><h3>Prime Location</h3><p>Conveniently located near major colleges, malls and everyday essentials.</p></div></article>
+          <article class="amenity reveal"><div class="icon">🏠</div><div><h3>Comfortable Stay</h3><p>Thoughtfully arranged accommodation for students and working professionals.</p></div></article>
+          <article class="amenity reveal"><div class="icon">📞</div><div><h3>Easy Enquiry</h3><p>Call or WhatsApp us directly to check current room availability.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="rooms">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Rooms & pricing</span>
+          <h2>Find your space.</h2>
+          <p class="lead">Choose between single and double occupancy, with AC and non-AC options. Meals, laundry and security are included.</p>
+          <p class="pricing-note">* For complete details regarding advance payments, security deposits, or pricing structures, please contact the owner directly.</p>
+        </div>
+
+        <div class="rooms-grid">
+          <article class="room-card glass reveal">
+            <div class="room-image"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/room1.jpeg" alt="Double occupancy non-AC room at Dream House PG" loading="lazy"><span class="room-tag">Non-AC</span></div>
+            <div class="room-body"><h3>Double Occupancy — Non-AC</h3><p>Comfortable shared accommodation for two residents.</p><ul class="features"><li>Meals included</li><li>Laundry included</li><li>Security provided</li></ul><div class="room-footer"><div class="price">₹8,000<small>per person / month</small></div><a class="btn btn-secondary" href="https://wa.me/919123917587?text=Hello%20Dream%20House%20PG%2C%20I%20would%20like%20to%20enquire%20about%20room%20availability." target="_blank" rel="noopener">WhatsApp</a></div></div>
+          </article>
+          <article class="room-card glass reveal">
+            <div class="room-image"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/room2.jpeg" alt="Double occupancy AC room at Dream House PG" loading="lazy"><span class="room-tag">AC</span></div>
+            <div class="room-body"><h3>Double Occupancy — AC</h3><p>Shared accommodation for two residents with air conditioning.</p><ul class="features"><li>Meals included</li><li>Laundry included</li><li>Security provided</li></ul><div class="room-footer"><div class="price">₹9,000<small>per person / month</small></div><a class="btn btn-secondary" href="https://wa.me/919123917587?text=Hello%20Dream%20House%20PG%2C%20I%20would%20like%20to%20enquire%20about%20room%20availability." target="_blank" rel="noopener">WhatsApp</a></div></div>
+          </article>
+          <article class="room-card glass reveal">
+            <div class="room-image"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/room3.jpeg" alt="Single occupancy non-AC room at Dream House PG" loading="lazy"><span class="room-tag">Non-AC</span></div>
+            <div class="room-body"><h3>Single Occupancy — Non-AC</h3><p>A private room for residents who prefer their own space.</p><ul class="features"><li>Meals included</li><li>Laundry included</li><li>Security provided</li></ul><div class="room-footer"><div class="price">₹10,000<small>per month</small></div><a class="btn btn-secondary" href="https://wa.me/919123917587?text=Hello%20Dream%20House%20PG%2C%20I%20would%20like%20to%20enquire%20about%20room%20availability." target="_blank" rel="noopener">WhatsApp</a></div></div>
+          </article>
+          <article class="room-card glass reveal">
+            <div class="room-image"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/room4.jpeg" alt="Single occupancy AC room at Dream House PG" loading="lazy"><span class="room-tag">AC</span></div>
+            <div class="room-body"><h3>Single Occupancy — AC</h3><p>A private air-conditioned room for a more personal stay.</p><ul class="features"><li>Meals included</li><li>Laundry included</li><li>Security provided</li></ul><div class="room-footer"><div class="price">₹12,000<small>per month</small></div><a class="btn btn-secondary" href="https://wa.me/919123917587?text=Hello%20Dream%20House%20PG%2C%20I%20would%20like%20to%20enquire%20about%20room%20availability." target="_blank" rel="noopener">WhatsApp</a></div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="gallery">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Gallery</span>
+          <h2>A glimpse of the space.</h2>
+          <p class="lead">Swipe on mobile or use the controls to explore the property.</p>
+        </div>
+
+        <div class="gallery-slider reveal" id="gallerySlider" aria-label="Property gallery">
+          <div class="gallery-track">
+            <div class="gallery-item"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/hallway.jpeg" alt="Dream House PG hallway" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/hero1.jpeg" alt="Dream House PG exterior" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/hero2.jpeg" alt="Dream House PG property" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/hero3.jpeg" alt="Dream House PG interior" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/room1.jpeg" alt="Dream House PG room 1" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/room2.jpeg" alt="Dream House PG room 2" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/room3.jpeg" alt="Dream House PG room 3" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/room4.jpeg" alt="Dream House PG room 4" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://raw.githubusercontent.com/priyangshu07-FL/DreamHousePG/main/images/room5.jpeg" alt="Dream House PG room 5" loading="lazy"></div>
+          </div>
+          <div class="slider-controls">
+            <button class="slider-arrow" data-gallery-prev aria-label="Previous gallery image">‹</button>
+            <span></span>
+            <button class="slider-arrow" data-gallery-next aria-label="Next gallery image">›</button>
+          </div>
+        </div>
+        <p class="gallery-note">Photos shown above are from Dream House PG.</p>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">Get in touch</span>
+          <h2>Come take a look.</h2>
+          <p class="lead">Have questions about rooms, pricing or availability? Call or WhatsApp us directly and we will be happy to help.</p>
+        </div>
+
+        <div class="contact-grid">
+          <div class="contact-card glass reveal">
+            <h3>Dream House PG</h3>
+            <div class="contact-details">
+              <div class="contact-detail"><div class="icon">⌖</div><div><strong>Location</strong><span><a href="https://maps.app.goo.gl/A1ETwjMVVAHUzs9p8" target="_blank" rel="noopener">Open Google Maps pin →</a></span></div></div>
+              <div class="contact-detail"><div class="icon">☎</div><div><strong>Phone</strong><span><a href="tel:+919123917587">+91 91239 17587</a></span></div></div>
+              <div class="contact-detail"><div class="icon">✉</div><div><strong>Email</strong><span><a href="mailto:dassona721642@gmail.com">dassona721642@gmail.com</a></span></div></div>
+              <div class="contact-detail"><div class="icon">◷</div><div><strong>Visiting Hours</strong><span>Call anytime for enquiries and availability.</span></div></div>
+            </div>
+            <div class="map-placeholder" style="margin-top:20px; padding:0; overflow:hidden;">
+              <iframe
+                src="https://www.google.com/maps?q=22.5645663,88.4932666&z=15&output=embed"
+                title="Dream House PG location"
+                width="100%"
+                height="300"
+                style="border:0; border-radius:22px; display:block;"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </div>
+
+          <div class="contact-card glass reveal">
+            <form id="contactForm">
+              <label>Name
+                <input type="text" name="name" placeholder="[Your Name]" required>
+              </label>
+              <label>Phone / WhatsApp
+                <input type="tel" name="phone" placeholder="[Phone Number]" required>
+              </label>
+              <label>Email
+                <input type="email" name="email" placeholder="[Email Address]">
+              </label>
+              <label>Room preference
+                <select name="room">
+                  <option value="">Select Room Type</option>
+                  <option>Single Occupancy — AC</option>
+                  <option>Single Occupancy — Non-AC</option>
+                  <option>Double Occupancy — AC</option>
+                  <option>Double Occupancy — Non-AC</option>
+                  <option>Premium Room</option>
+                </select>
+              </label>
+              <label>Message
+                <textarea name="message" placeholder="Write your message..."></textarea>
+              </label>
+              <button class="btn btn-primary" type="submit">Send Enquiry →</button>
+              <p id="formStatus" role="status" aria-live="polite" style="color:var(--sage-dark); font-weight:700; font-size:.85rem;"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>© 2026 Dream House PG</span>
+      <span>All Rights Reserved · Privacy Policy · Terms of Service</span>
+    </div>
+  </footer>
+
+  <div class="mobile-cta">
+    <a class="btn btn-primary" href="https://wa.me/919123917587?text=Hello%20Dream%20House%20PG%2C%20I%20would%20like%20to%20enquire%20about%20room%20availability." target="_blank" rel="noopener">WhatsApp Enquiry <span>→</span></a>
+  </div>
+
+  <script>
+    (() => {
+      // Mobile navigation
+      const menuBtn = document.querySelector('.menu-toggle');
+      const navLinks = document.querySelector('.nav-links');
+
+      menuBtn.addEventListener('click', () => {
+        const open = menuBtn.getAttribute('aria-expanded') === 'true';
+        menuBtn.setAttribute('aria-expanded', String(!open));
+        navLinks.classList.toggle('open', !open);
+      });
+
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          menuBtn.setAttribute('aria-expanded', 'false');
+          navLinks.classList.remove('open');
+        });
+      });
+
+      // Generic swipe helper
+      function addSwipe(element, onLeft, onRight) {
+        let startX = 0, startY = 0;
+        element.addEventListener('touchstart', e => {
+          const t = e.changedTouches[0];
+          startX = t.clientX;
+          startY = t.clientY;
+        }, { passive: true });
+
+        element.addEventListener('touchend', e => {
+          const t = e.changedTouches[0];
+          const dx = t.clientX - startX;
+          const dy = t.clientY - startY;
+          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
+            dx < 0 ? onLeft() : onRight();
+          }
+        }, { passive: true });
+      }
+
+      // Hero carousel
+      const heroSlider = document.querySelector('#heroSlider');
+      const heroTrack = heroSlider.querySelector('.slides');
+      const heroSlides = [...heroSlider.querySelectorAll('.slide')];
+      const heroDots = heroSlider.querySelector('[data-hero-dots]');
+      let heroIndex = 0;
+
+      heroSlides.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.addEventListener('click', () => goHero(i));
+        heroDots.appendChild(dot);
+      });
+
+      function goHero(index) {
+        heroIndex = (index + heroSlides.length) % heroSlides.length;
+        heroTrack.style.transform = `translateX(-${heroIndex * 100}%)`;
+        heroDots.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === heroIndex));
+      }
+
+      heroSlider.querySelector('[data-hero-prev]').addEventListener('click', () => goHero(heroIndex - 1));
+      heroSlider.querySelector('[data-hero-next]').addEventListener('click', () => goHero(heroIndex + 1));
+      addSwipe(heroSlider, () => goHero(heroIndex + 1), () => goHero(heroIndex - 1));
+
+      let heroTimer = setInterval(() => goHero(heroIndex + 1), 5000);
+      heroSlider.addEventListener('mouseenter', () => clearInterval(heroTimer));
+      heroSlider.addEventListener('mouseleave', () => {
+        heroTimer = setInterval(() => goHero(heroIndex + 1), 5000);
+      });
+
+      // Gallery carousel
+      const gallerySlider = document.querySelector('#gallerySlider');
+      const galleryTrack = gallerySlider.querySelector('.gallery-track');
+      const galleryItems = [...gallerySlider.querySelectorAll('.gallery-item')];
+      let galleryIndex = 0;
+
+      function galleryStep() {
+        return galleryItems[0].getBoundingClientRect().width + 12;
+      }
+      function goGallery(index) {
+        galleryIndex = Math.max(0, Math.min(index, galleryItems.length - 1));
+        galleryTrack.style.transform = `translateX(-${galleryIndex * galleryStep()}px)`;
+      }
+      gallerySlider.querySelector('[data-gallery-prev]').addEventListener('click', () => goGallery(galleryIndex - 1));
+      gallerySlider.querySelector('[data-gallery-next]').addEventListener('click', () => goGallery(galleryIndex + 1));
+      addSwipe(gallerySlider, () => goGallery(galleryIndex + 1), () => goGallery(galleryIndex - 1));
+
+      // Scroll reveal
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: .12 });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      // Live WhatsApp form connection
+      document.querySelector('#contactForm').addEventListener('submit', e => {
+        e.preventDefault();
+        
+        const form = e.target;
+        const name = form.name.value.trim();
+        const phone = form.phone.value.trim();
+        const email = form.email.value.trim();
+        const room = form.room.value;
+        const message = form.message.value.trim();
+
+        // Constructing the preloaded WhatsApp message
+        let waText = `Hello Dream House PG, I have a new enquiry:\n\n`;
+        waText += `*Name:* ${name}\n`;
+        waText += `*Phone:* ${phone}\n`;
+        if (email) waText += `*Email:* ${email}\n`;
+        if (room) waText += `*Room Preference:* ${room}\n`;
+        if (message) waText += `*Message:* ${message}\n`;
+
+        // Encoding the message to make it URL-safe
+        const encodedText = encodeURIComponent(waText);
+        
+        // Generating the WhatsApp API link with India country code +91
+        const waUrl = `https://wa.me/919123917587?text=${encodedText}`;
+
+        // Feedback to the user and opening the link
+        document.querySelector('#formStatus').textContent = 'Redirecting to WhatsApp...';
+        window.open(waUrl, '_blank');
+        
+        // Optional: Reset form after submitting
+        // form.reset();
+      });
+
+      // Keep gallery position valid after resize
+      window.addEventListener('resize', () => goGallery(galleryIndex));
+    })();
+  </script>
+</body>
+</html>
